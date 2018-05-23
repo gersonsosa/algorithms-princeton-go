@@ -11,12 +11,10 @@ type dutch struct {
 func Sort(buckets []int) {
 	// create dutch struct and define partition indexes
 	flag := dutch{
-		1,
-		len(buckets) / 3,
-		len(buckets) * 2 / 3,
-		color(0),
-		"",
-		"",
+		p1Idx:   1,
+		p2Idx:   len(buckets) / 3,
+		p3Idx:   len(buckets) / 3 * 2,
+		p1Color: color(0),
 	}
 
 	flag.init(buckets)
@@ -26,25 +24,31 @@ func Sort(buckets []int) {
 	}
 }
 
-func (flag dutch) init(buckets []int) {
-	p2IdxColor := color(buckets[flag.p2Idx])
-	if flag.p1Color == p2IdxColor {
-		// swap with current idx at destination bucket
+func (flag *dutch) init(buckets []int) {
+	if p2IdxColor := color(buckets[flag.p2Idx]); flag.p1Color == p2IdxColor {
 		flag.putInDestinationBucket(buckets, flag.p2Idx)
+	} else {
+		flag.p2Color = p2IdxColor
 	}
-	p3IdxColor := color(buckets[flag.p3Idx])
-	if flag.p1Color == p3IdxColor {
-		// swap with current idx at destination bucket
+
+	if p3IdxColor := color(buckets[flag.p3Idx]); flag.p1Color == p3IdxColor {
+		flag.putInDestinationBucket(buckets, flag.p3Idx)
+	} else if flag.p2Color == p3IdxColor {
+		flag.putInDestinationBucket(buckets, flag.p3Idx)
+	} else {
+		flag.p3Color = p3IdxColor
 	}
 }
 
-func (flag dutch) putInDestinationBucket(buckets []int, i int) {
+func (flag *dutch) putInDestinationBucket(buckets []int, i int) {
 	// get destination bucket
 	dest := flag.getDestinationBucket(color(i))
-	swap(buckets, i, dest)
+	if dest != -1 {
+		swap(buckets, i, dest)
+	}
 }
 
-func (flag dutch) getDestinationBucket(color string) int {
+func (flag *dutch) getDestinationBucket(color string) int {
 	switch color {
 	case flag.p1Color:
 		return flag.p1Idx
