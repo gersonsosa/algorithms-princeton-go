@@ -1,2 +1,2 @@
 # algorithms-princeton-go
-Go implementation for algorithms princeton course
+Go implementation for algorithms princeton course (not for grading)
